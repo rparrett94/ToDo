@@ -10,11 +10,17 @@ import UIKit
 
 class ToDoListViewController: UITableViewController {
     
+    let defaults = UserDefaults.standard
+    
     
     var itemArray = ["Clean car", "Clean kitchen", "Clean bathroom", "Walk Dog", "Change bed sheets", "Hoover house", "Garden work"]
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        if let items = defaults.array(forKey: "ToDoListArray") {
+            itemArray = items as! [String]
+        }
         
     }
     
@@ -56,6 +62,8 @@ class ToDoListViewController: UITableViewController {
         
         let action = UIAlertAction(title: "Add Item", style: .default) { (action) in
             self.itemArray.append(textField.text!)
+            
+            self.defaults.set(self.itemArray, forKey: "ToDoListArray")
             self.tableView.reloadData()
         }
         
@@ -69,7 +77,29 @@ class ToDoListViewController: UITableViewController {
         
     }
     
-
-
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    @IBAction func randomButton(_ sender: Any) {
+        let randomTask = self.itemArray[Int.random(in: 0 ..< itemArray.count)]
+        let alertController = UIAlertController(title: "Your random task is...", message: "\(randomTask)", preferredStyle: .alert)
+        let OKAction = UIAlertAction(title: "OK", style: .default) { (action:UIAlertAction!) in
+            print("Ok button tapped");
+        }
+        alertController.addAction(OKAction)
+        self.present(alertController, animated: true, completion:nil)
+    }
 }
 
