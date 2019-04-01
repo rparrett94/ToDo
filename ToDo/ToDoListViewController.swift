@@ -12,25 +12,52 @@ class ToDoListViewController: UITableViewController {
     
     let defaults = UserDefaults.standard
     
-    
-    var itemArray = ["Clean car", "Clean kitchen", "Clean bathroom", "Walk Dog", "Change bed sheets", "Hoover house", "Garden work"]
+    var itemArray = [Item]()
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        if let items = defaults.array(forKey: "ToDoListArray") {
-            itemArray = items as! [String]
+        let newItem = Item()
+        newItem.title = "Clean car"
+        itemArray.append(newItem)
+        
+        let newItem2 = Item()
+        newItem2.title = "Clean kitchen"
+        itemArray.append(newItem2)
+        
+        let newItem3 = Item()
+        newItem3.title = "Clean bathroom"
+        itemArray.append(newItem3)
+        
+        let newItem4 = Item()
+        newItem4.title = "Walk Dog"
+        itemArray.append(newItem4)
+        
+        let newItem5 = Item()
+        newItem5.title = "Hoover house"
+        itemArray.append(newItem5)
+        
+        let newItem6 = Item()
+        newItem6.title = "Garden work"
+        itemArray.append(newItem6)
+        
+        let newItem7 = Item()
+        newItem7.title = "Change bed sheets"
+        itemArray.append(newItem7)
+        
+        
+        if let items = defaults.array(forKey: "ToDoListArray") as? [Item] {
+            itemArray = items
         }
         
+ 
     }
-    
-    
     //TableView DatasourceMethods
-    
-    
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let item = itemArray[indexPath.row]
         let cell = tableView.dequeueReusableCell(withIdentifier: "ToDoItemCell", for: indexPath)
-        cell.textLabel?.text = itemArray[indexPath.row]
+        cell.textLabel?.text = item.title
+        cell.accessoryType = item.done ? .checkmark : .none
         return cell
     }
     
@@ -44,12 +71,8 @@ class ToDoListViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         //print(itemArray[indexPath.row])
         tableView.deselectRow(at: indexPath, animated: true)
-        if tableView.cellForRow(at: indexPath)?.accessoryType == .checkmark {
-            tableView.cellForRow(at: indexPath)?.accessoryType = .none
-        } else {
-            tableView.cellForRow(at: indexPath)?.accessoryType = .checkmark
-        }
-
+        itemArray[indexPath.row].done = !itemArray[indexPath.row].done
+        tableView.reloadData() //forces the tableview to run cellForRowAtIndexPath
     }
     
     //Add new items section
@@ -61,7 +84,11 @@ class ToDoListViewController: UITableViewController {
         let alert = UIAlertController.init(title: "Add To Do ITem", message: "", preferredStyle: .alert)
         
         let action = UIAlertAction(title: "Add Item", style: .default) { (action) in
-            self.itemArray.append(textField.text!)
+            
+            let newItem = Item()
+            newItem.title = textField.text!
+            
+            self.itemArray.append(newItem)
             
             self.defaults.set(self.itemArray, forKey: "ToDoListArray")
             self.tableView.reloadData()
@@ -94,7 +121,7 @@ class ToDoListViewController: UITableViewController {
     
     @IBAction func randomButton(_ sender: Any) {
         let randomTask = self.itemArray[Int.random(in: 0 ..< itemArray.count)]
-        let alertController = UIAlertController(title: "Your random task is...", message: "\(randomTask)", preferredStyle: .alert)
+        let alertController = UIAlertController(title: "Your random task is...", message: "\(randomTask.title)", preferredStyle: .alert)
         let OKAction = UIAlertAction(title: "OK", style: .default) { (action:UIAlertAction!) in
             print("Ok button tapped");
         }
